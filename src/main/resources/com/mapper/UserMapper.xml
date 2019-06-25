@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.UserMapper">
+
+
+    <resultMap id="UserResultMap" type="com.domain.User">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="user_name" property="userName" jdbcType="VARCHAR"/>
+        <result column="real_name" property="realName" jdbcType="VARCHAR"/>
+        <result column="password" property="passWord" jdbcType="VARCHAR"/>
+        <result column="create_date" property="createDate" jdbcType="VARCHAR"/>
+        <result column="last_login_name" property="lastLoginName" jdbcType="VARCHAR"/>
+        <result column="en_abled" property="enAbled" jdbcType="VARCHAR"/>
+        <result column="account_non_expired" property="accountNonExpired" jdbcType="VARCHAR"/>
+        <result column="account_non_locked" property="accountNonLocked" jdbcType="VARCHAR"/>
+        <result column="credentials_non_expired" property="credentialsNonExpired" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap id="PremResultMap" type="com.domain.Permission">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="perm_name" property="permName" jdbcType="VARCHAR"/>
+        <result column="perm_tag" property="permTag" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!-- 查询用户 -->
+    <select id="findByUsername" parameterType="string" resultMap="UserResultMap">
+        select * from tab_user where user_name = #{value}
+    </select>
+
+    <!-- 查询用户的权限 -->
+    <select id="findPermissionByUsername" parameterType="string" resultMap="PremResultMap">
+        select permission.*
+           from
+             tab_user user
+             inner join tab_role_user user_role on user.id = user_role.user_id
+             inner join tab_role_permission role_permission on user_role.role_id = role_permission.role_id
+             inner join tab_permission permission on role_permission.perm_id = permission.id
+             where user.user_name = #{value};
+    </select>
+
+    <update id="updatePassword" parameterType="user">
+        update tab_user set password = #{passWord} where user_name = #{userName}
+    </update>
+
+</mapper>

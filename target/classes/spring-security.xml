@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+            http://www.springframework.org/schema/security
+            http://www.springframework.org/schema/security/spring-security-4.2.xsd">
+
+    <!-- <security:http>: spring过滤器链配置：
+             1）需要拦截什么资源
+             2）什么资源什么角色权限
+             3）定义认证方式：HttpBasic，FormLogin（*）
+             4）定义登录页面，定义登录请求地址，定义错误处理方式
+         -->
+    <security:http>
+        <!--
+        X-Frame-Options：
+        Spring-Security 默认是设置了这个 “X-Frame-Options” 属性为DENY
+        他的值有三个：
+        （1）DENY — 表示该页面不允许在 frame 中展示，即便是在相同域名的页面中嵌套也不允许。
+        （2）SAMEORIGIN — 表示该页面可以在相同域名页面的 frame 中展示。
+        （3）ALLOW-FROM https://example.com/ — 表示该页面可以在指定来源的 frame 中展示。
+        -->
+        <security:headers>
+            <security:frame-options policy="SAMEORIGIN"/>
+        </security:headers>
+        <!--pattern: 需要拦截资源
+            access: 拦截方式
+                isFullyAuthenticated(): 该资源需要认证才可以访问
+                isAnonymous():只有匿名用户才可以访问（如果登录用户就无法访问）
+                permitAll():允许所有人（匿名和登录用户）方法
+                pattern="/prod/index*"  "/prod/index*"：为controller中的请求路径
+        -->
+        <security:intercept-url pattern="/prod/index*" access="permitAll()"/>
+        <security:intercept-url pattern="/userLogin" access="permitAll()"/>
+        <security:intercept-url pattern="/js/**" access="permitAll()"/>
+        <security:intercept-url pattern="/imageCode" access="permitAll()"/>
+        <security:intercept-url pattern="/prod/delete" access="hasRole('ROLE_DELETE_PRODUCT')"/>
+        <security:intercept-url pattern="/prod/update" access="hasRole('ROLE_UPDATE_PRODUCT')"/>
+        <security:intercept-url pattern="/prod/add" access="hasRole('ROLE_ADD_PRODUCT')"/>
+        <security:intercept-url pattern="/prod/list" access="hasRole('ROLE_LIST_PRODUCT')"/>
+        <security:intercept-url pattern="/**" access="isFullyAuthenticated()"/>
+        <security:http-basic/>
+
+        <!-- 加上 rememberMe 功能 -->
+        <!-- token-validity-seconds: 有效秒数 -->
+        <security:remember-me token-repository-ref="jdbcTokenRepository" token-validity-seconds="3600"/>
+
+        <!--自定义拦截器-->
+        <security:custom-filter ref="imageCodeAuthenicationFilter" before="FORM_LOGIN_FILTER"/>
+        <!--自定义权限不足页面
+            error-page="/error"  /error: 为controller中的请求路径
+        -->
+        <security:access-denied-handler error-page="/error"/>
+
+        <!--自定义登录页面login-processing-url：请求登录地址
+            login-page="/userLogin" "/userLogin"：为controller中的请求路径
+            default-target-url:默认登录成功跳转路径
+        -->
+        <security:form-login authentication-success-forward-url="/mainDo"
+                             default-target-url="/mainDo"
+                             login-page="/userLogin" login-processing-url="/securityLogin"
+                             authentication-failure-handler-ref="myAuthenticationFailureHandler"
+                             authentication-success-handler-ref="myAuthenticationSuccessHandler"
+        />
+        <!-- 关闭Spring Security CSRF机制 -->
+        <security:csrf disabled="true"/>
+        <!--退出登录
+            invalidate-session    表示是否要在退出登录后让当前 session 失效，默认为 true。
+            delete-cookies    指定退出登录后需要删除的 cookie 名称，多个 cookie 之间以逗号分隔。
+            logout-success-url    指定成功退出登录后要重定向的 URL。需要注意的是对应的 URL 应当是不需要登录就可以访问的。
+            success-handler-ref   指定用来处理成功退出登录的 LogoutSuccessHandler 的引用。
+        -->
+        <security:logout logout-url="/securityLogout.do" logout-success-url="/userLogin"></security:logout>
+    </security:http>
+
+    <!--security:authentication-manager： 认证管理器 1）认证信息提供方式（账户名，密码，当前用户权限）-->
+    <security:authentication-manager>
+        <!-- 自定义 user-service-ref UserDetailService 方式-->
+        <security:authentication-provider user-service-ref="myUserSecurity">
+            <!-- 密码加密，解密 -->
+            <security:password-encoder ref="bCryptPasswordEncoder"/>
+            <!--<security:user-service>
+                <security:user name="eric" password="123456" authorities="ROLE_USER"/>
+                <security:user name="jack" password="123456" authorities="ROLE_MANAGER"/>
+                <security:user name="anni" password="123456" authorities="ROLE_ADMIN"/>
+            </security:user-service>-->
+        </security:authentication-provider>
+    </security:authentication-manager>
+    <bean name="myUserSecurity" class="com.security.MyUserSecurity"/>
+    <bean name="myAuthenticationSuccessHandler" class="com.security.MyAuthenticationSuccessHandler"/>
+    <bean name="myAuthenticationFailureHandler" class="com.security.MyAuthenticationFailureHandler"/>
+    <!-- 密码加密 -->
+    <bean id="bCryptPasswordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
+    <bean id="imageCodeAuthenicationFilter" class="com.security.ImageCodeAuthenicationFilter">
+        <property name="authenticationFailureHandler" ref="myAuthenticationFailureHandler"/>
+    </bean>
+
+    <bean id="jdbcTokenRepository"
+          class="org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+
+</beans>
