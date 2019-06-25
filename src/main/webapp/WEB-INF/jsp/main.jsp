@@ -68,7 +68,7 @@
                 </li>
                 <li class="layui-nav-item" lay-unselect>
                     <a href="javascript:;">
-                        <cite>贤心</cite>
+                        <cite>${username}</cite>
                     </a>
                     <dl class="layui-nav-child">
                         <dd><a lay-href="#">基本资料</a></dd>

@@ -1,6 +1,9 @@
 package com.controller;
 
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
@@ -13,37 +16,46 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class MainController {
 
 
-	@RequestMapping("/mainDo")
-	public String mainDo(){
-		return  "main";
-	}
-	/**
-	 * 登录页面
-	 *
-	 * @return
-	 */
-	@RequestMapping("/userLogin")
-	public String login() {
-		return "login";
-	}
+    @RequestMapping("/mainDo")
+    public String mainDo(Model model) {
+        Object object = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (object != null) {
+            if (object instanceof UserDetails) {
+                UserDetails userDetails = (UserDetails) object;
+                String username = userDetails.getUsername();
+                model.addAttribute("username", username);
+            }
+        }
+        return "main";
+    }
 
-	/**
-	 * 错误页面
-	 *
-	 * @return
-	 */
-	@RequestMapping("/error")
-	public String error() {
-		return "error";
-	}
+    /**
+     * 登录页面
+     *
+     * @return
+     */
+    @RequestMapping("/userLogin")
+    public String login() {
+        return "login";
+    }
 
-	/**
-	 * 验证码
-	 *
-	 * @return
-	 */
-	@RequestMapping("/imageCode")
-	public String imageCode() {
-		return "imageCode";
-	}
+    /**
+     * 错误页面
+     *
+     * @return
+     */
+    @RequestMapping("/error")
+    public String error() {
+        return "error";
+    }
+
+    /**
+     * 验证码
+     *
+     * @return
+     */
+    @RequestMapping("/imageCode")
+    public String imageCode() {
+        return "imageCode";
+    }
 }
