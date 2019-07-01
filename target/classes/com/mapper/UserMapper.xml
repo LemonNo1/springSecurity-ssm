@@ -16,6 +16,7 @@
         <result column="account_non_expired" property="accountNonExpired" jdbcType="VARCHAR"/>
         <result column="account_non_locked" property="accountNonLocked" jdbcType="VARCHAR"/>
         <result column="credentials_non_expired" property="credentialsNonExpired" jdbcType="VARCHAR"/>
+        <result column="status" property="status" jdbcType="INTEGER"/>
     </resultMap>
 
     <resultMap id="PremResultMap" type="com.domain.Permission">
@@ -44,4 +45,38 @@
         update tab_user set password = #{passWord} where user_name = #{userName}
     </update>
 
+    <select id="getUserList" parameterType="map" resultMap="UserResultMap">
+        SELECT * from tab_user where delete_status = '0'
+        <if test="userName!=null and userName!='' ">and user_name like concat('%',#{userName},'%')</if>
+    </select>
+
+    <insert id="insertIntoUser" parameterType="map">
+         INSERT INTO `spring-security`.`tab_user`
+        ( `user_name`, `real_name`,
+        `password`, `create_date`,
+        `last_login_time`, `en_abled`,
+        `account_non_expired`, `account_non_locked`,
+        `credentials_non_expired`, `mobile`,`status`)
+        VALUES (#{userName}, #{realName},
+        #{password},#{createDate},#{lastLoginTime},
+        '1', '1', '1','1',#{mobile},#{status});
+    </insert>
+
+    <select id="selectUserById" parameterType="map" resultMap="UserResultMap">
+        select * from tab_user where id= #{id}
+    </select>
+
+    <update id="updateUser" parameterType="map">
+        UPDATE `spring-security`.`tab_user` SET
+        `user_name`=#{userName},
+       `real_name`=#{realName},
+        `mobile`=#{mobile},
+        `status`=#{status}
+        WHERE (`id`=#{id});
+    </update>
+
+    <update id="deleteUser" parameterType="map">
+        UPDATE `spring-security`.`tab_user`
+        SET delete_status = 1 where id = ${id};
+    </update>
 </mapper>

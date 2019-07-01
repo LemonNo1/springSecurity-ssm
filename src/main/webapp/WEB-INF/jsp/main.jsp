@@ -91,38 +91,20 @@
         <!-- 侧边菜单 -->
         <div class="layui-side layui-side-menu">
             <div class="layui-side-scroll">
-                <div class="layui-logo" lay-href="home/console.html">
+                <div class="layui-logo" lay-href="#">
                     <span>项目管理系统</span>
                 </div>
-
-                <ul class="layui-nav layui-nav-tree" lay-shrink="all" id="LAY-system-side-menu"
-                    lay-filter="layadmin-system-side-menu">
-                    <li data-name="home" class="layui-nav-item layui-nav-itemed">
+                <ul class="layui-nav layui-nav-tree" lay-shrink="all" id="LAY-system-side-menu" lay-filter="layadmin-system-side-menu">
+                    <li data-name="app" class="layui-nav-item">
                         <a href="javascript:;" lay-tips="主页" lay-direction="2">
                             <i class="layui-icon layui-icon-home"></i>
-                            <cite>商品管理</cite>
+                            <cite>系统管理</cite>
                         </a>
                         <dl class="layui-nav-child">
-                            <security:authorize access="hasAuthority('ROLE_ADD_PRODUCT')">
                                 <dd data-name="console" class="layui-this">
-                                    <a lay-href="${ctx}/prod/add">商品添加</a>
+                                    <a lay-href="${ctx}/user/toFindAll">用户管理</a>
                                 </dd>
-                            </security:authorize>
-                            <security:authorize access="hasAuthority('ROLE_UPDATE_PRODUCT')">
-                                <dd data-name="console">
-                                    <a lay-href="${ctx}/prod/update">商品修改</a>
-                                </dd>
-                            </security:authorize>
-                            <security:authorize access="hasAuthority('ROLE_DELETE_PRODUCT')">
-                                <dd data-name="console">
-                                    <a lay-href="${ctx}/prod/delete">商品删除</a>
-                                </dd>
-                            </security:authorize>
-                            <security:authorize access="hasAuthority('ROLE_LIST_PRODUCT')">
-                                <dd data-name="console">
-                                    <a lay-href="${ctx}/prod/list">商品查询</a>
-                                </dd>
-                            </security:authorize>
+                            <security:authorize access="hasAuthority('ROLE_LIST_PRODUCT')"> </security:authorize>
                         </dl>
                     </li>
                 </ul>

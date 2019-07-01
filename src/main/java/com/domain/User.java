@@ -15,10 +15,13 @@ import java.util.List;
  */
 public class User implements UserDetails {
 
+
     private Integer id; //int(10) NOT NULL,
+    private String mobile; //手机号
     private String userName; //varchar(50) DEFAULT NULL,
     private String realName; //varchar(50) DEFAULT NULL,
     private String passWord; //varchar(50) DEFAULT NULL,
+    private Integer status; //用户状态 1：启用，0：停用
     private Date createDate; //date DEFAULT NULL,
     private Date lastLoginTime; //date DEFAULT NULL,
     private boolean enAbled; //int(5) DEFAULT NULL,
@@ -45,17 +48,31 @@ public class User implements UserDetails {
         this.id = id;
     }
 
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
     @Override
     public String getUsername() {
         return userName;
     }
-
 
     @Override
     public String getPassword() {
         return passWord;
     }
 
+    public String getMobile() {
+        return mobile;
+    }
+
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
+    }
 
     public String getUserName() {
         return userName;

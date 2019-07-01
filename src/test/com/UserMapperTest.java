@@ -20,7 +20,6 @@ public class UserMapperTest {
     @Autowired
     UserMapper userMapper;
 
-
     @Test
     public void userTest() {
        User user = userMapper.findByUsername("eric");
@@ -42,5 +41,10 @@ public class UserMapperTest {
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         user.setPassWord(passwordEncoder.encode("123456"));
         userMapper.updatePassword(user);
+    }
+
+    @Test
+    public void Test1(){
+
     }
 }

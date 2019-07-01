@@ -32,6 +32,7 @@
                 permitAll():允许所有人（匿名和登录用户）方法
                 pattern="/prod/index*"  "/prod/index*"：为controller中的请求路径
         -->
+        <security:intercept-url pattern="/user/*" access="permitAll()"/>
         <security:intercept-url pattern="/prod/index*" access="permitAll()"/>
         <security:intercept-url pattern="/userLogin" access="permitAll()"/>
         <security:intercept-url pattern="/js/**" access="permitAll()"/>
@@ -40,7 +41,7 @@
         <security:intercept-url pattern="/prod/update" access="hasRole('ROLE_UPDATE_PRODUCT')"/>
         <security:intercept-url pattern="/prod/add" access="hasRole('ROLE_ADD_PRODUCT')"/>
         <security:intercept-url pattern="/prod/list" access="hasRole('ROLE_LIST_PRODUCT')"/>
-        <security:intercept-url pattern="/**" access="isFullyAuthenticated()"/>
+        <security:intercept-url pattern="/**" access="permitAll()"/>
         <security:http-basic/>
 
         <!-- 加上 rememberMe 功能 -->

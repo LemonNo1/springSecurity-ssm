@@ -41,7 +41,6 @@ public class MainController {
 
     /**
      * 错误页面
-     *
      * @return
      */
     @RequestMapping("/error")

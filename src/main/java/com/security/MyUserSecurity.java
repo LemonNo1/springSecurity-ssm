@@ -32,7 +32,6 @@ public class MyUserSecurity implements UserDetailsService {
         if (user != null) {
             //根据用户名查询当前用户所有权限
             List<Permission> permList = userMapper.findPermissionByUsername(username);
-
             //authorities：存放所有用户权限
             List<GrantedAuthority> authorities = new ArrayList<>();
             for (Permission perm : permList) {
