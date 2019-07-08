@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.PermMapper">
+
+
+    <resultMap id="PermResultMap" type="com.domain.Permission">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="perm_name" property="permName" jdbcType="VARCHAR"/>
+        <result column="perm_tag" property="permTag" jdbcType="VARCHAR"/>
+        <result column="url" property="url" jdbcType="VARCHAR"/>
+        <result column="parent_id" property="parentId" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="selectPermList" resultMap="PermResultMap" parameterType="map">
+        select * from tab_permission where delete_status = 0
+    </select>
+
+    <select id="selectPermChild" resultMap="PermResultMap" parameterType="map">
+        select * from tab_permission where delete_status = 0 and parent_id &lt;&gt;  0
+    </select>
+
+    <select id="selectPermParent" resultMap="PermResultMap">
+        select * from tab_permission where delete_status = 0 and parent_id = 0
+    </select>
+
+    <insert id="insertIntoPerm" parameterType="map">
+        insert into tab_permission
+         (`perm_name`,`perm_tag`,`url`,`parent_id`)
+         values(#{permName},#{permTag},#{url},#{parentId});
+    </insert>
+
+    <update id="delete" parameterType="String">
+        update set tab_permission
+    </update>
+</mapper>
